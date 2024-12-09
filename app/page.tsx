@@ -11,13 +11,14 @@ import { generateCookingStep } from './serverActions/generateCookingStep';
 // I have used previous lecture slides and videos, Neon docs and ChatGPT extensively in this project to help me create this project and database
 
 export default function Page() {
-  const [currentRecipe, setCurrentRecipe] = useState<string | null>(null);
+  const [currentRecipe, setCurrentRecipe] = useState("");
 
   // Seperated server functions in order to fix error in vercel deployment and added function below
   async function handleGenerateCookingStep() {
     const step = await generateCookingStep();
     setCurrentRecipe(step);
   }
+
   return (
     <div>
       <h1>Add a New Ingredient and Cooking Method</h1>
@@ -44,14 +45,11 @@ export default function Page() {
       <div>
         <h2>Generate Random Cooking Step</h2>
         <button onClick={handleGenerateCookingStep}>Generate Cooking Step</button>
-        {currentRecipe && (
-          <div>
-            <h3>Generated Cooking Step:</h3>
-            <p>{currentRecipe}</p>
-          </div>
-        )}
+        <div>
+          <h3>Generated Cooking Step:</h3>
+          <p>{currentRecipe}</p>
+        </div>
       </div>
-
     </div>
   );
 }
