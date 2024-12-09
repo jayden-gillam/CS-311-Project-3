@@ -1,0 +1,77 @@
+// used chatgpt to help create this schema
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Ingredient {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  tags  IngredientTag[]
+}
+
+model Method {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  tags  MethodTag[]
+}
+
+model Recipe {
+  id         Int      @id @default(autoincrement())
+  name       String
+  imageUrl   String?
+  steps      Step[]   
+  likes      Int      @default(0)
+  tags       RecipeTag[]
+  createdAt  DateTime @default(now())
+}
+
+model Step {
+  id        Int      @id @default(autoincrement())
+  recipeId  Int
+  order     Int      
+  content   String   
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+}
+
+model Tag {
+  id       Int           @id @default(autoincrement())
+  name     String        @unique
+  recipes  RecipeTag[]
+  methods  MethodTag[]
+  ingredients IngredientTag[]
+}
+
+model RecipeTag {
+  id       Int    @id @default(autoincrement())
+  recipeId Int
+  tagId    Int
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([recipeId, tagId]) // Prevent duplicate recipe-tag pairs
+}
+
+model IngredientTag {
+  id           Int        @id @default(autoincrement())
+  ingredientId Int
+  tagId        Int
+  ingredient   Ingredient  @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  tag          Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([ingredientId, tagId]) 
+}
+
+model MethodTag {
+  id       Int    @id @default(autoincrement())
+  methodId Int
+  tagId    Int
+  method   Method @relation(fields: [methodId], references: [id], onDelete: Cascade)
+  tag      Tag  
+}
