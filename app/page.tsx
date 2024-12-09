@@ -36,13 +36,12 @@ export default function Page() {
       </form>
 
       <form action={addCookingStep}>
-        <h2>Cooking Step</h2>
-        <input type="text" placeholder="Write a cooking step template. Use '*' for ingredients and '^' for methods." name="template" required />
+        <h2>Cooking Step (Use '*' for ingredients and '^' for methods, e.g. )</h2>
+        <input type="text" placeholder="Cooking step" name="template" required />
         <button type="submit">Add Cooking Step</button>
       </form>
 
       <div>
-        <h2>Generate Random Cooking Step</h2>
         <button onClick={handleGenerateCookingStep}>Generate Cooking Step</button>
         {currentRecipe && (
           <div>
@@ -51,7 +50,6 @@ export default function Page() {
           </div>
         )}
       </div>
-
     </div>
   );
 }
