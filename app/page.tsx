@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { neon } from '@neondatabase/serverless';
+import { addIngredient } from './serverActions/addIngredient';
+import { addMethod } from './serverActions/addMethod';
+import { addCookingStep } from './serverActions/addCookingStep';
+import { generateCookingStep } from './serverActions/generateCookingStep';
 
 // Vercel has updated its Storage system so that I can't just create a postgressql database so I am using Neon and I am working on a modified
 // version of the boilerplate provided.
@@ -10,76 +13,11 @@ import { neon } from '@neondatabase/serverless';
 export default function Page() {
   const [currentRecipe, setCurrentRecipe] = useState<string | null>(null);
 
-  async function addIngredient(formData: FormData) {
-    'use server';
-    const sql = neon(`${process.env.DATABASE_URL}`);
-
-    // used vercel docs to figure this out
-    const name = formData.get('ingredient_name') as string;
-    const tag = formData.get('ingredient_tag') as string;
-
-    await sql`INSERT INTO ingredients (name) VALUES (${name})`;
-
-    await sql`
-      INSERT INTO tags (name)
-      VALUES (${tag})
-      ON CONFLICT (name) DO NOTHING
-    `;
-
-    await sql`
-      INSERT INTO ingredienttags (ingredient_id, tag_id)
-      SELECT
-        (SELECT id FROM ingredients WHERE name = ${name}),
-        (SELECT id FROM tags WHERE name = ${tag})
-      ON CONFLICT DO NOTHING
-    `;
-
+  // Seperated server functions in order to fix error in vercel deployment and added function below
+  async function handleGenerateCookingStep() {
+    const step = await generateCookingStep();
+    setCurrentRecipe(step);
   }
-
-  async function addMethod(formData: FormData) {
-    'use server';
-    const sql = neon(`${process.env.DATABASE_URL}`);
- 
-    const methodName = formData.get('method_name') as string;
-
-    await sql`INSERT INTO methods (name) VALUES (${methodName})`;
-
-  }
-
-  async function addCookingStep(formData: FormData) {
-    'use server';
-    const sql = neon(`${process.env.DATABASE_URL}`);
-
-    const template = formData.get('template') as string;
-
-    await sql`INSERT INTO steptemplates (template) VALUES (${template})`;
-  }
-  
-  //used ChatGPT to understand, fix and implement this function
-
-  async function fetchGeneratedCookingStep() {
-    const sql = neon(`${process.env.DATABASE_URL}`);
-
-    const randomStep = await sql`SELECT template FROM steptemplates ORDER BY RANDOM() LIMIT 1`;
-    const stepTemplate = randomStep[0]?.template;
-
-    if (!stepTemplate) {
-      setCurrentRecipe("No cooking steps available.");
-      return;
-    }
-
-    const ingredientResult = await sql`SELECT name FROM ingredients ORDER BY RANDOM() LIMIT 1`;
-    const ingredient = ingredientResult[0]?.name; // used ChatGPT to help me fix this
-
-    const methodResult = await sql`SELECT name FROM methods ORDER BY RANDOM() LIMIT 1`;
-    const method = methodResult[0]?.name // used ChatGPT to help me fix this
-
-    const completedStep = stepTemplate.replace(/\*/g, ingredient).replace(/\^/g, method);
-
-    setCurrentRecipe(completedStep);
-  }
-
-
   return (
     <div>
       <h1>Add a New Ingredient and Cooking Method</h1>
@@ -105,10 +43,7 @@ export default function Page() {
 
       <div>
         <h2>Generate Random Cooking Step</h2>
-        <button onClick={async () => {
-          await fetchGeneratedCookingStep();
-        }}>Generate Cooking Step</button>
-        
+        <button onClick={handleGenerateCookingStep}>Generate Cooking Step</button>
         {currentRecipe && (
           <div>
             <h3>Generated Cooking Step:</h3>
