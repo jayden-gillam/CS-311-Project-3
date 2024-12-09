@@ -57,7 +57,7 @@ export default function Page() {
     'use server';
     const sql = neon(`${process.env.DATABASE_URL}`);
 
-    const randomStep = await sql`SELECT template FROM cooking_steps ORDER BY RANDOM() LIMIT 1`;
+    const randomStep = await sql`SELECT template FROM steptemplates ORDER BY RANDOM() LIMIT 1`;
     const stepTemplate = randomStep[0].template;
 
     if (!stepTemplate) {
