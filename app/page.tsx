@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import { neon } from '@neondatabase/serverless';
 
 // Vercel has updated its Storage system so that I can't just create a postgressql database so I am using Neon and I am working on a modified
@@ -5,8 +8,7 @@ import { neon } from '@neondatabase/serverless';
 // I have used previous lecture slides and videos, Neon docs and ChatGPT extensively in this project to help me create this project and database
 
 export default function Page() {
-
-  var currentRecipe = "";
+  const [currentRecipe, setCurrentRecipe] = useState<string | null>(null);
 
   async function addIngredient(formData: FormData) {
     'use server';
@@ -52,27 +54,29 @@ export default function Page() {
 
     await sql`INSERT INTO steptemplates (template) VALUES (${template})`;
   }
+  
+  //used ChatGPT to understand, fix and implement this function
 
-  async function generateCookingStep() {
-    'use server';
+  async function fetchGeneratedCookingStep() {
     const sql = neon(`${process.env.DATABASE_URL}`);
 
     const randomStep = await sql`SELECT template FROM steptemplates ORDER BY RANDOM() LIMIT 1`;
-    const stepTemplate = randomStep[0].template;
+    const stepTemplate = randomStep[0]?.template;
 
     if (!stepTemplate) {
-      currentRecipe = "No cooking steps available.";
+      setCurrentRecipe("No cooking steps available.");
+      return;
     }
 
     const ingredientResult = await sql`SELECT name FROM ingredients ORDER BY RANDOM() LIMIT 1`;
-    const ingredient = ingredientResult[0].name;
+    const ingredient = ingredientResult[0]?.name; // used ChatGPT to help me fix this
 
     const methodResult = await sql`SELECT name FROM methods ORDER BY RANDOM() LIMIT 1`;
-    const method = methodResult[0].name;
+    const method = methodResult[0]?.name // used ChatGPT to help me fix this
 
     const completedStep = stepTemplate.replace(/\*/g, ingredient).replace(/\^/g, method);
 
-    currentRecipe = completedStep;
+    setCurrentRecipe(completedStep);
   }
 
 
@@ -99,11 +103,19 @@ export default function Page() {
         <button type="submit">Add Cooking Step</button>
       </form>
 
-      <form action={generateCookingStep}>
-        <button type="submit">Generate Random Cooking Step</button>
-      </form>
-
-      <div>{currentRecipe}</div>
+      <div>
+        <h2>Generate Random Cooking Step</h2>
+        <button onClick={async () => {
+          await fetchGeneratedCookingStep();
+        }}>Generate Cooking Step</button>
+        
+        {currentRecipe && (
+          <div>
+            <h3>Generated Cooking Step:</h3>
+            <p>{currentRecipe}</p>
+          </div>
+        )}
+      </div>
 
     </div>
   );
