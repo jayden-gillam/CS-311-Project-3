@@ -5,6 +5,9 @@ import { neon } from '@neondatabase/serverless';
 // I have used previous lecture slides and videos, Neon docs and ChatGPT extensively in this project to help me create this project and database
 
 export default function Page() {
+
+  var currentRecipe = "";
+
   async function addIngredient(formData: FormData) {
     'use server';
     const sql = neon(`${process.env.DATABASE_URL}`);
@@ -41,6 +44,38 @@ export default function Page() {
 
   }
 
+  async function addCookingStep(formData: FormData) {
+    'use server';
+    const sql = neon(`${process.env.DATABASE_URL}`);
+
+    const template = formData.get('template') as string;
+
+    await sql`INSERT INTO steptemplates (template) VALUES (${template})`;
+  }
+
+  async function generateCookingStep() {
+    'use server';
+    const sql = neon(`${process.env.DATABASE_URL}`);
+
+    const randomStep = await sql`SELECT template FROM cooking_steps ORDER BY RANDOM() LIMIT 1`;
+    const stepTemplate = randomStep[0].template;
+
+    if (!stepTemplate) {
+      currentRecipe = "No cooking steps available.";
+    }
+
+    const ingredientResult = await sql`SELECT name FROM ingredients ORDER BY RANDOM() LIMIT 1`;
+    const ingredient = ingredientResult[0].name;
+
+    const methodResult = await sql`SELECT name FROM methods ORDER BY RANDOM() LIMIT 1`;
+    const method = methodResult[0].name;
+
+    const completedStep = stepTemplate.replace(/\*/g, ingredient).replace(/\^/g, method);
+
+    currentRecipe = completedStep;
+  }
+
+
   return (
     <div>
       <h1>Add a New Ingredient and Cooking Method</h1>
@@ -57,6 +92,19 @@ export default function Page() {
         <input type="text" placeholder="Method Name" name="method_name" required />
         <button type="submit">Add Cooking Method</button>
       </form>
+
+      <form action={addCookingStep}>
+        <h2>Cooking Step</h2>
+        <input type="text" placeholder="Write a cooking step template. Use '*' for ingredients and '^' for methods." name="template" required />
+        <button type="submit">Add Cooking Step</button>
+      </form>
+
+      <form action={generateCookingStep}>
+        <button type="submit">Generate Random Cooking Step</button>
+      </form>
+
+      <div>{currentRecipe}</div>
+
     </div>
   );
 }
