@@ -21,7 +21,7 @@ export default function Page() {
     `;
 
     await sql`
-      INSERT INTO ingredient_tags (ingredient_id, tag_id)
+      INSERT INTO ingredienttags (ingredient_id, tag_id)
       SELECT
         (SELECT id FROM ingredients WHERE name = ${name}),
         (SELECT id FROM tags WHERE name = ${tag})
