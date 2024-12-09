@@ -1,7 +1,8 @@
+'use server';
+
 import { neon } from '@neondatabase/serverless';
 
 export async function addIngredient(formData: FormData) {
-    'use server';
     const sql = neon(`${process.env.DATABASE_URL}`);
 
     // used vercel docs to figure this out

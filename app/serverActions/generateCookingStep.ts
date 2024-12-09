@@ -1,3 +1,5 @@
+'use server';
+
 import { neon } from '@neondatabase/serverless';
 //used ChatGPT to understand, fix and implement this function
 
