@@ -9,8 +9,10 @@ export default function Page() {
     'use server';
     const sql = neon(`${process.env.DATABASE_URL}`);
 
+    // used vercel docs to figure this out
     const name = formData.get('name') as string;
     const tag = formData.get('tag') as string;
+    const methodName = formData.get('method_name') as string;
 
     await sql`INSERT INTO ingredients (name) VALUES (${name})`;
 
@@ -27,14 +29,27 @@ export default function Page() {
         (SELECT id FROM tags WHERE name = ${tag})
       ON CONFLICT DO NOTHING
     `;
+
+    await sql`INSERT INTO methods (name) VALUES (${methodName})`;
+
   }
 
   return (
-    <form action={create}>
-      <h1>Add a New Ingredient</h1>
-      <input type="text" placeholder="Ingredient Name" name="name" required />
-      <input type="text" placeholder="Tag" name="tag" required />
-      <button type="submit">Add Ingredient</button>
-    </form>
+    <div>
+      <h1>Add a New Ingredient and Cooking Method</h1>
+
+      <form action={create}>
+        <h2>Add ingredient</h2>
+        <input type="text" placeholder="Ingredient Name" name="ingredient_name" required />
+        <input type="text" placeholder="Tag for Ingredient" name="ingredient_tag" required />
+        <button type="submit">Add Ingredient</button>
+      </form>
+
+      <form action={create}>
+        <h2>Add cooking method e.g. "Boil"</h2>
+        <input type="text" placeholder="Method Name" name="method_name" required />
+        <button type="submit">Add Cooking Method</button>
+      </form>
+    </div>
   );
 }
