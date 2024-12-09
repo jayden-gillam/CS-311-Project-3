@@ -10,8 +10,8 @@ export default function Page() {
     const sql = neon(`${process.env.DATABASE_URL}`);
 
     // used vercel docs to figure this out
-    const name = formData.get('name') as string;
-    const tag = formData.get('tag') as string;
+    const name = formData.get('ingredient_name') as string;
+    const tag = formData.get('ingredient_tag') as string;
 
     await sql`INSERT INTO ingredients (name) VALUES (${name})`;
 
