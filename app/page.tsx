@@ -12,6 +12,8 @@ import { generateCookingStep } from './serverActions/generateCookingStep';
 
 export default function Page() {
   const [currentRecipe, setCurrentRecipe] = useState<string | null>(null);
+  const [stepCount, setStepCount] = useState<number>(1);
+
 
   // Seperated server functions in order to fix error in vercel deployment and added function below
   async function handleGenerateCookingStep() {
@@ -42,13 +44,25 @@ export default function Page() {
       </form>
 
       <div>
-        <button onClick={handleGenerateCookingStep}>Generate Cooking Step</button>
+      <h2>Generate Recipe</h2>
+        <label>
+          Number of Steps:
+          <input
+            type="number"
+            min="2"
+            max="5"
+            value={stepCount}
+            onChange={(e) => setStepCount(Number(e.target.value))}
+          />
+        </label>
+        <button onClick={handleGenerateCookingStep}>Generate Recipe</button>
+        {/* <button onClick={handleGenerateCookingStep}>Generate Recipe</button>
         {currentRecipe && (
           <div>
             <h3>Generated Cooking Step:</h3>
             <p>{currentRecipe}</p>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
