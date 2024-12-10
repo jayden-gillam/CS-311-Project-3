@@ -95,6 +95,7 @@ export default function Page() {
     }
   }
 
+  // Used ChatGPT to generate base tailwind styling
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-bold text-black text-center mb-8">Cooking Recipe Generator</h1>
@@ -106,14 +107,14 @@ export default function Page() {
             type="text"
             placeholder="Ingredient Name"
             name="ingredient_name"
-            className="w-full p-2 border border-gray-300 rounded-md mb-4"
+            className="w-full p-2 border border-gray-300 rounded-md text-black mb-4"
             required
           />
           <input
             type="text"
             placeholder="Tag for Ingredient"
             name="ingredient_tag"
-            className="w-full p-2 border border-gray-300 rounded-md mb-4"
+            className="w-full p-2 border border-gray-300 rounded-md text-black mb-4"
             required
           />
           <button
@@ -130,7 +131,7 @@ export default function Page() {
             type="text"
             placeholder="Method Name"
             name="method_name"
-            className="w-full p-2 border border-gray-300 rounded-md mb-4"
+            className="w-full p-2 border border-gray-300 rounded-md text-black mb-4"
             required
           />
           <button
@@ -147,7 +148,7 @@ export default function Page() {
             type="text"
             placeholder="Use '*' for ingredients and '^' for methods"
             name="template"
-            className="w-full p-2 border border-gray-300 rounded-md mb-4"
+            className="w-full p-2 border border-gray-300 rounded-md text-black mb-4"
             required
           />
           <button
@@ -162,14 +163,14 @@ export default function Page() {
       <div className="mt-8 bg-white p-6 shadow-md rounded-md">
         <h2 className="text-lg font-semibold text-black mb-4">Generate Recipe</h2>
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-2">Number of Steps:</label>
+          <label className="block text-sm text-black font-medium mb-2">Number of Steps:</label>
           <input
             type="number"
             min="2"
             max="5"
             value={stepCount}
             onChange={(e) => setStepCount(Number(e.target.value))}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md text-black"
           />
         </div>
         <button
