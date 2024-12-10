@@ -131,17 +131,23 @@ export default function Page() {
         )}
 
         {currentRecipe.length > 0 && (
-            <div>
-              <h2>Save Recipe</h2>
-              <input
-                type="text"
-                placeholder="Enter Recipe Name"
-                value={recipeName}
-                onChange={(e) => setRecipeName(e.target.value)}
-              />
-              <button onClick={handleSaveRecipe}>Save Recipe</button>
-            </div>
-          )}
+          <div className="mt-8 bg-white p-6 shadow-md rounded-md">
+            <h2 className="text-lg font-semibold text-black mb-4">Save Recipe</h2>
+            <input
+              type="text"
+              placeholder="Enter Recipe Name"
+              value={recipeName}
+              onChange={(e) => setRecipeName(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md text-black mb-4"
+            />
+            <button
+              onClick={handleSaveRecipe}
+              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+            >
+              Save Recipe
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
