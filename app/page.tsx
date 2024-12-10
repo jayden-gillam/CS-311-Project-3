@@ -10,7 +10,7 @@ import { saveRecipe } from './serverActions/saveRecipe';
 export default function Page() {
   const [currentRecipe, setCurrentRecipe] = useState<string[]>([]);
   const [stepCount, setStepCount] = useState(1);
-  const [recipeName, setRecipeName] = useState('');
+  const [recipeName, setRecipeName] = useState("''");
 
 
   async function handleGenerateCookingStep() {
@@ -30,6 +30,7 @@ export default function Page() {
     }
 
     await saveRecipe(recipeName, currentRecipe);
+    setRecipeName("");
   }
 
   // Used ChatGPT to generate base tailwind styling
