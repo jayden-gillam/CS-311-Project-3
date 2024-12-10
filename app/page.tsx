@@ -11,15 +11,21 @@ import { generateCookingStep } from './serverActions/generateCookingStep';
 // I have used previous lecture slides and videos, Neon docs and ChatGPT extensively in this project to help me create this project and database
 
 export default function Page() {
-  const [currentRecipe, setCurrentRecipe] = useState<string | null>(null);
-  const [stepCount, setStepCount] = useState<number>(1);
+  const [currentRecipe, setCurrentRecipe] = useState<string[]>([]);
+  const [stepCount, setStepCount] = useState(1);
 
 
-  // Seperated server functions in order to fix error in vercel deployment and added function below
+  // Used ChatGPT to debug errors
   async function handleGenerateCookingStep() {
-    const step = await generateCookingStep();
-    setCurrentRecipe(step);
+    for (let i = 0; i < stepCount; i++) {
+      const step = await generateCookingStep();
+      if (step) {
+        setCurrentRecipe((prevSteps) => [...prevSteps, ...step]);
+      }
+    }
+
   }
+  
   return (
     <div>
       <h1>Add a New Ingredient and Cooking Method</h1>
@@ -56,13 +62,17 @@ export default function Page() {
           />
         </label>
         <button onClick={handleGenerateCookingStep}>Generate Recipe</button>
-        {/* <button onClick={handleGenerateCookingStep}>Generate Recipe</button>
-        {currentRecipe && (
-          <div>
-            <h3>Generated Cooking Step:</h3>
-            <p>{currentRecipe}</p>
-          </div>
-        )} */}
+        
+        {currentRecipe.length > 0 && (
+        <div>
+          <h3>Generated Recipe:</h3>
+          <ol>
+            {currentRecipe.map((step, index) => (
+              <li key={index}>{step}</li>
+            ))}
+          </ol>
+        </div>
+      )}
       </div>
     </div>
   );
