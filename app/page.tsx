@@ -20,7 +20,7 @@ export default function Page() {
     for (let i = 0; i < stepCount; i++) {
       const step = await generateCookingStep();
       if (step) {
-        setCurrentRecipe((prevSteps) => [...prevSteps, ...step]);
+        setCurrentRecipe((prevSteps) => [...prevSteps, step]);
       }
     }
 
