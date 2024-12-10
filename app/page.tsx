@@ -17,6 +17,8 @@ export default function Page() {
 
   // Used ChatGPT to debug errors
   async function handleGenerateCookingStep() {
+    setCurrentRecipe([]);
+
     for (let i = 0; i < stepCount; i++) {
       const step = await generateCookingStep();
       if (step) {
@@ -51,15 +53,8 @@ export default function Page() {
 
       <div>
       <h2>Generate Recipe</h2>
-        <label>
-          Number of Steps:
-          <input
-            type="number"
-            min="2"
-            max="5"
-            value={stepCount}
-            onChange={(e) => setStepCount(Number(e.target.value))}
-          />
+        <label>Number of Steps:
+          <input type="number" min="2" max="5" value={stepCount} onChange={(e) => setStepCount(Number(e.target.value))}/>
         </label>
         <button onClick={handleGenerateCookingStep}>Generate Recipe</button>
         
